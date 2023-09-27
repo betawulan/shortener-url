@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"math/rand"
+	"sort"
 	"time"
 )
 
@@ -71,6 +72,34 @@ func (s *shortenUrl) Redirect(shortenUrl string) (string, error) {
 func (s *shortenUrl) GetClickCount(shortenUrl string) int {
 
 	return s.ClickCount[shortenUrl]
+}
+
+func (s *shortenUrl) Sort(sortType string) ([]string, error) {
+	sortedURLs := make(map[string]int)
+
+	for shortURL, count := range s.ClickCount {
+		sortedURLs[shortURL] = count
+	}
+
+	var sortedKeys []string
+	for k := range sortedURLs {
+		sortedKeys = append(sortedKeys, k)
+	}
+
+	if sortType == "asc" {
+		sort.Strings(sortedKeys)
+	} else if sortType == "desc" {
+		sort.Sort(sort.Reverse(sort.StringSlice(sortedKeys)))
+	} else {
+		return make([]string, 0), errors.New("invalid sort type")
+	}
+
+	sortedURLList := make([]string, len(sortedKeys))
+	for i, k := range sortedKeys {
+		sortedURLList[i] = k
+	}
+
+	return sortedURLList, nil
 }
 
 func NewShortenUrlService(defaultExpiry time.Duration) ShortenUrlService {

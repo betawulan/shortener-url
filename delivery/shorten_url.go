@@ -39,10 +39,22 @@ func (s *shortenDelivery) GetClickCount(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]int{"clickCount": clickCount})
 }
 
+func (s *shortenDelivery) Sort(c echo.Context) error {
+	sortType := c.QueryParam("sortType")
+
+	sortedURLList, err := s.service.Sort(sortType)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, sortedURLList)
+}
+
 func NewShortenUrlDelivery(e *echo.Echo, urlService service.ShortenUrlService) {
 	delivery := shortenDelivery{service: urlService}
 
 	e.GET("/shorten", delivery.Shorten)
 	e.GET("/:shortURL", delivery.Redirect)
 	e.GET("/:shortURL/clicks", delivery.GetClickCount)
+	e.GET("/sort", delivery.Sort)
 }
