@@ -32,9 +32,17 @@ func (s shortenDelivery) Redirect(c echo.Context) error {
 	return c.Redirect(http.StatusSeeOther, originalURL)
 }
 
+func (s *shortenDelivery) GetClickCount(c echo.Context) error {
+	shortURL := c.Param("shortURL")
+	clickCount := s.service.GetClickCount(shortURL)
+
+	return c.JSON(http.StatusOK, map[string]int{"clickCount": clickCount})
+}
+
 func NewShortenUrlDelivery(e *echo.Echo, urlService service.ShortenUrlService) {
 	delivery := shortenDelivery{service: urlService}
 
 	e.GET("/shorten", delivery.Shorten)
 	e.GET("/:shortURL", delivery.Redirect)
+	e.GET("/:shortURL/clicks", delivery.GetClickCount)
 }

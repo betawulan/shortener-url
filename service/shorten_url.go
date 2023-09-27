@@ -68,6 +68,11 @@ func (s *shortenUrl) Redirect(shortenUrl string) (string, error) {
 	return originalURL, nil
 }
 
+func (s *shortenUrl) GetClickCount(shortenUrl string) int {
+
+	return s.ClickCount[shortenUrl]
+}
+
 func NewShortenUrlService(defaultExpiry time.Duration) ShortenUrlService {
 	return &shortenUrl{
 		URLs:          make(map[string]string),
