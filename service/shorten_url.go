@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"math/rand"
 	"time"
 )
@@ -45,6 +46,26 @@ func generateShortURL() string {
 	}
 
 	return string(b)
+}
+
+func (s *shortenUrl) Redirect(shortenUrl string) (string, error) {
+	originalURL, ok := s.URLs[shortenUrl]
+	if !ok {
+		return "", errors.New("shortened URL not found")
+	}
+
+	expireTime, ok := s.Expiry[originalURL]
+	if !ok {
+		return "", errors.New("expiry is not found")
+	}
+
+	if time.Now().After(expireTime) {
+		return "", errors.New("url was expired")
+	}
+
+	s.ClickCount[shortenUrl]++
+
+	return originalURL, nil
 }
 
 func NewShortenUrlService(defaultExpiry time.Duration) ShortenUrlService {

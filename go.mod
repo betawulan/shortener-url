@@ -3,7 +3,6 @@ module github.com/betawulan/shortener-url
 go 1.21
 
 require (
-	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/echo/v4 v4.11.1
 	github.com/spf13/viper v1.16.0
 )
