@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/spf13/viper"
@@ -23,10 +22,11 @@ func main() {
 	}
 
 	port := viper.GetString("port")
+	defaultExpiry := viper.GetDuration("default_expiry")
 
 	e := echo.New()
 
-	shortenService := service.NewShortenUrlService(1 * time.Hour)
+	shortenService := service.NewShortenUrlService(defaultExpiry)
 	delivery.NewShortenUrlDelivery(e, shortenService)
 
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", port)))
